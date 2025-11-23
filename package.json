@@ -2,7 +2,7 @@
   "name": "express-backend-postgres",
   "version": "1.0.0",
   "description": "Base project for backend development using Node, Express, and PostgreSQL.",
-  "main": "src/index.js",
+  "main": "./backend/src/index.js",
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon --legacy-watch --watch src src/index.js",
@@ -21,6 +21,7 @@
   "author": "Tiago H. Trojahn",
   "license": "MIT",
   "dependencies": {
+    "concurrently": "^9.2.1",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "nodemon": "^3.1.10",
