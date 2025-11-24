@@ -29,7 +29,6 @@ export const MovieList = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // sanitize and validate duracao_min
       const dur = formData.duracao_min === '' || formData.duracao_min == null
         ? null
         : parseInt(formData.duracao_min, 10);

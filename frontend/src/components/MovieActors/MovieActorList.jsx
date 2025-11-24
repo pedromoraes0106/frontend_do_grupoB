@@ -60,7 +60,6 @@ export const MovieActorList = () => {
       alert('Ator associado com sucesso!');
     } catch (err) {
       console.error(err);
-      // Friendly message for unique constraint error from backend
       if (err.message && err.message.toLowerCase().includes('duplicate')) {
         alert('Erro ao associar ator: este ator já está associado ao filme.');
       } else {
