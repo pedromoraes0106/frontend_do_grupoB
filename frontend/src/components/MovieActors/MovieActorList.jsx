@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAppContext } from '../../contexts/AppContext';
+import { useAppContext } from '../../AppContext';
 import './MovieActors.css';
 
 export const MovieActorList = () => {

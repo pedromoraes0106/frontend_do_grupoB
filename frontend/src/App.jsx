@@ -1,4 +1,4 @@
-import { AppProvider } from './contexts/AppContext';
+import { AppProvider } from './AppContext';
 import { MovieList } from './components/Movies/MovieList';
 import { ActorList } from './components/Actors/ActorList';
 import { ReviewList } from './components/Reviews/ReviewList';
