@@ -1,16 +1,26 @@
-import React, { useState } from 'react';
-import { useAppContext } from '../../AppContext';
-import './MovieActors.css';
+import React, { useState } from "react";
+import { useAppContext } from "../../AppContext";
+import "./MovieActors.css";
 
 export const MovieActorList = () => {
-  const { movies, actors, loading, error, carregarFilmes, carregarAtores, carregarAtoresDoFilme, movieActors, criarFilmeAtor, deletarFilmeAtor } = useAppContext();
-  const [selectedMovieId, setSelectedMovieId] = useState('');
+  const {
+    movies,
+    actors,
+    error,
+    carregarFilmes,
+    carregarAtores,
+    carregarAtoresDoFilme,
+    movieActors,
+    criarFilmeAtor,
+    deletarFilmeAtor,
+  } = useAppContext();
+  const [selectedMovieId, setSelectedMovieId] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
-    filme_id: '',
-    ator_id: '',
-    papel: '',
-    ordem_credito: '',
+    filme_id: "",
+    ator_id: "",
+    papel: "",
+    ordem_credito: "",
   });
 
   React.useEffect(() => {
@@ -26,96 +36,84 @@ export const MovieActorList = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: name === 'ordem_credito' ? (value ? parseInt(value) : '') : value
+      [name]: name === "ordem_credito" ? (value ? parseInt(value) : "") : value,
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!selectedMovieId) {
-      alert('Selecione um filme');
-      return;
-    }
+    if (!selectedMovieId) return;
 
     try {
-      const actorId = formData.ator_id;
-      const already = movieActors.some(ma => String(ma.ator_id || ma.id) === String(actorId));
-      if (already) {
-        alert('Atenção: este ator já está associado a este filme.');
-        return;
-      }
       const submitData = {
         filme_id: selectedMovieId,
         ator_id: formData.ator_id,
         papel: formData.papel || null,
-        ordem_credito: formData.ordem_credito || null
+        ordem_credito: formData.ordem_credito || null,
       };
-      
+
       await criarFilmeAtor(submitData);
       await carregarAtoresDoFilme(selectedMovieId);
-      setFormData({ filme_id: '', ator_id: '', papel: '', ordem_credito: '' });
+      setFormData({ filme_id: "", ator_id: "", papel: "", ordem_credito: "" });
       setShowForm(false);
-      alert('Ator associado com sucesso!');
     } catch (err) {
-      console.error(err);
-      if (err.message && err.message.toLowerCase().includes('duplicate')) {
-        alert('Erro ao associar ator: este ator já está associado ao filme.');
-      } else {
-        alert('Erro ao associar ator: ' + (err.message || err));
-      }
+      alert("Erro: " + (err.message || err));
     }
   };
 
   const handleDelete = async (filmId, actorId) => {
-    if (window.confirm('Tem certeza que deseja remover este ator do filme?')) {
+    if (window.confirm("Remover ator do filme?")) {
       try {
         await deletarFilmeAtor(filmId, actorId);
         await carregarAtoresDoFilme(selectedMovieId);
       } catch (err) {
-        alert('Erro ao remover ator');
+        alert("Erro ao remover: ", err);
       }
     }
   };
 
   const handleCancel = () => {
     setShowForm(false);
-    setFormData({ filme_id: '', ator_id: '', papel: '', ordem_credito: '' });
+    setFormData({ filme_id: "", ator_id: "", papel: "", ordem_credito: "" });
   };
 
   const getActorName = (actorId) => {
-    const actor = actors.find(a => a.id === actorId);
-    return actor ? actor.nome : 'Ator não encontrado';
+    const actor = actors.find((a) => a.id === actorId);
+    return actor ? actor.nome : "Ator não encontrado";
   };
 
   return (
     <div className="container">
-      <h2>Gerenciar Atores em Filmes</h2>
+      <h2>Elenco & Casting</h2>
       {error && <div className="error">{error}</div>}
 
-      <div className="form-group">
-        <label>Selecione um filme</label>
+      {/* Área do Seletor Principal - Com classe nova para estilo */}
+      <div className="movie-selector-area">
+        <label>Gerenciar elenco do filme:</label>
         <select
           value={selectedMovieId}
           onChange={(e) => setSelectedMovieId(e.target.value)}
         >
           <option value="">-- Selecione um filme --</option>
-          {movies.map(movie => (
-            <option key={movie.id} value={movie.id}>{movie.titulo}</option>
+          {movies.map((movie) => (
+            <option key={movie.id} value={movie.id}>
+              {movie.titulo}
+            </option>
           ))}
         </select>
       </div>
 
       {selectedMovieId && !showForm && (
-        <button className="btn-primary" onClick={() => setShowForm(true)}>
-          + Adicionar Ator ao Filme
+        <button className="btn-add-actor" onClick={() => setShowForm(true)}>
+          + Adicionar Ator ao Elenco
         </button>
       )}
 
       {selectedMovieId && showForm && (
         <form onSubmit={handleSubmit} className="form">
-          <h3>Associar Ator ao Filme</h3>
+          <h3>Novo Papel</h3>
           <div className="form-group">
             <label>Ator</label>
             <select
@@ -124,14 +122,16 @@ export const MovieActorList = () => {
               onChange={handleInputChange}
               required
             >
-              <option value="">Selecione um ator</option>
-              {actors.map(actor => (
-                <option key={actor.id} value={actor.id}>{actor.nome}</option>
+              <option value="">Selecione um ator...</option>
+              {actors.map((actor) => (
+                <option key={actor.id} value={actor.id}>
+                  {actor.nome}
+                </option>
               ))}
             </select>
           </div>
           <div className="form-group">
-            <label>Papel</label>
+            <label>Papel (Personagem)</label>
             <input
               type="text"
               name="papel"
@@ -141,45 +141,53 @@ export const MovieActorList = () => {
             />
           </div>
           <div className="form-group">
-            <label>Ordem de Crédito</label>
+            <label>Ordem nos Créditos</label>
             <input
               type="number"
               name="ordem_credito"
               value={formData.ordem_credito}
               onChange={handleInputChange}
-              placeholder="1, 2, 3..."
+              placeholder="1"
             />
           </div>
           <div className="form-buttons">
-            <button type="submit" className="btn-success">Salvar</button>
-            <button type="button" className="btn-secondary" onClick={handleCancel}>Cancelar</button>
+            <button type="submit" className="btn-success">
+              Confirmar
+            </button>
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={handleCancel}
+            >
+              Cancelar
+            </button>
           </div>
         </form>
       )}
 
       {selectedMovieId && (
         <>
-          {loading && <p>Carregando...</p>}
-          <h3>Atores do filme</h3>
-          <div className="list">
+          <div className="actors-grid">
             {movieActors.length === 0 ? (
-              <p>Nenhum ator associado a este filme</p>
+              <p style={{ color: "#666", gridColumn: "1/-1" }}>
+                Nenhum ator neste filme ainda.
+              </p>
             ) : (
-              movieActors.map(ma => (
-                <div key={`${ma.id || ma.ator_id}`} className="card">
-                  <div className="card-content">
+              movieActors.map((ma) => (
+                <div key={`${ma.id || ma.ator_id}`} className="actor-card">
+                  <div>
                     <h4>{getActorName(ma.ator_id || ma.id)}</h4>
-                    {ma.papel && <p><strong>Papel:</strong> {ma.papel}</p>}
-                    {ma.ordem_credito && <p><strong>Ordem:</strong> {ma.ordem_credito}º</p>}
+                    {ma.papel && <p>Papel: {ma.papel}</p>}
+                    {ma.ordem_credito && <p>Ordem: {ma.ordem_credito}º</p>}
                   </div>
-                  <div className="card-actions">
-                    <button 
-                      className="btn-delete" 
-                      onClick={() => handleDelete(selectedMovieId, ma.ator_id || ma.id)}
-                    >
-                      Remover
-                    </button>
-                  </div>
+                  <button
+                    className="btn-remove"
+                    onClick={() =>
+                      handleDelete(selectedMovieId, ma.ator_id || ma.id)
+                    }
+                  >
+                    Remover
+                  </button>
                 </div>
               ))
             )}

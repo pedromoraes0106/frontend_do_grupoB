@@ -3,7 +3,7 @@ import { useAppContext } from '../../AppContext';
 import './Movies.css';
 
 export const MovieList = () => {
-  const { movies, loading, error, carregarFilmes, deletarFilme, criarFilme, atualizarFilme } = useAppContext();
+  const { movies, error, carregarFilmes, deletarFilme, criarFilme, atualizarFilme } = useAppContext();
   const [editingId, setEditingId] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
@@ -157,8 +157,6 @@ export const MovieList = () => {
           </div>
         </form>
       )}
-
-      {loading && <p>Carregando...</p>}
       
       <div className="list">
         {movies.map(movie => (

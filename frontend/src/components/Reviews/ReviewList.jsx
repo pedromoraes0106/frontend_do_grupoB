@@ -3,7 +3,7 @@ import { useAppContext } from '../../AppContext';
 import './Reviews.css';
 
 export const ReviewList = () => {
-  const { reviews, movies, loading, error, carregarAvaliacoes, carregarFilmes, deletarAvaliacao, criarAvaliacao, atualizarAvaliacao } = useAppContext();
+  const { reviews, movies, error, carregarAvaliacoes, carregarFilmes, deletarAvaliacao, criarAvaliacao, atualizarAvaliacao } = useAppContext();
   const [editingId, setEditingId] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
@@ -154,8 +154,6 @@ export const ReviewList = () => {
           </div>
         </form>
       )}
-
-      {loading && <p>Carregando...</p>}
       
       <div className="list">
         {reviews.map(review => (

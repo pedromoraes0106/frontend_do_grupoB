@@ -3,7 +3,7 @@ import { useAppContext } from '../../AppContext';
 import './Actors.css';
 
 export const ActorList = () => {
-  const { actors, loading, error, carregarAtores, deletarAtor, criarAtor, atualizarAtor } = useAppContext();
+  const { actors, error, carregarAtores, deletarAtor, criarAtor, atualizarAtor } = useAppContext();
   const [editingId, setEditingId] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
@@ -127,8 +127,6 @@ export const ActorList = () => {
           </div>
         </form>
       )}
-
-      {loading && <p>Carregando...</p>}
       
       <div className="list">
         {actors.map(actor => (
