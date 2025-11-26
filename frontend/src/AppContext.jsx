@@ -48,11 +48,9 @@ export function AppProvider({ children }) {
   const [actors, setActors] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [movieActors, setMovieActors] = useState([]);
-  const [loading, setLoading] = useState(false);
 
   // FILMES
   const carregarFilmes = async () => {
-    setLoading(true);
     try {
       const data = await get('/movies');
       setMovies(data);
@@ -60,11 +58,9 @@ export function AppProvider({ children }) {
       console.error('Erro ao carregar filmes', err);
       throw err;
     }
-    setLoading(false);
   };
 
   const criarFilme = async (data) => {
-    setLoading(true);
     try {
       await post('/movies', data);
       await carregarFilmes();
@@ -72,11 +68,9 @@ export function AppProvider({ children }) {
       console.error('Erro ao criar filme', err);
       throw err;
     }
-    setLoading(false);
   };
 
   const atualizarFilme = async (id, data) => {
-    setLoading(true);
     try {
       await put(`/movies/${id}`, data);
       await carregarFilmes();
@@ -84,11 +78,9 @@ export function AppProvider({ children }) {
       console.error('Erro ao atualizar filme', err);
       throw err;
     }
-    setLoading(false);
   };
 
   const deletarFilme = async (id) => {
-    setLoading(true);
     try {
       try {
         const allReviews = await get('/reviews') || [];
@@ -112,7 +104,7 @@ export function AppProvider({ children }) {
         if (relations.length > 0) {
           await Promise.all(
             relations.map(r => del(`/movie-actors/${r.ator_id}/${id}`).catch(err => {
-              console.warn(`Falha ao deletar relação do ator ${r.ator_id}.`);
+              console.warn(`Falha ao deletar relação do ator ${r.ator_id}.`, err.message);
             }))
           );
         }
@@ -130,12 +122,10 @@ export function AppProvider({ children }) {
       console.error('Erro ao deletar filme', err);
       throw err;
     }
-    setLoading(false);
   };
 
   // ATORES
   const carregarAtores = async () => {
-    setLoading(true);
     try {
       const data = await get('/actors');
       setActors(data);
@@ -143,11 +133,9 @@ export function AppProvider({ children }) {
       console.error('Erro ao carregar atores', err);
       throw err;
     }
-    setLoading(false);
   };
 
   const criarAtor = async (data) => {
-    setLoading(true);
     try {
       await post('/actors', data);
       await carregarAtores();
@@ -155,11 +143,9 @@ export function AppProvider({ children }) {
       console.error('Erro ao criar ator', err);
       throw err;
     }
-    setLoading(false);
   };
 
   const atualizarAtor = async (id, data) => {
-    setLoading(true);
     try {
       await put(`/actors/${id}`, data);
       await carregarAtores();
@@ -167,11 +153,9 @@ export function AppProvider({ children }) {
       console.error('Erro ao atualizar ator', err);
       throw err;
     }
-    setLoading(false);
   };
 
   const deletarAtor = async (id) => {
-    setLoading(true);
     try {
       try {
         const relations = await get(`/movie-actors/actor/${id}`) || [];
@@ -195,12 +179,10 @@ export function AppProvider({ children }) {
       console.error('Erro ao deletar ator', err);
       throw err;
     }
-    setLoading(false);
   };
 
   // AVALIAÇÕES
   const carregarAvaliacoes = async () => {
-    setLoading(true);
     try {
       const data = await get('/reviews');
       setReviews(data);
@@ -208,11 +190,9 @@ export function AppProvider({ children }) {
       console.error('Erro ao carregar avaliações', err);
       throw err;
     }
-    setLoading(false);
   };
 
   const criarAvaliacao = async (data) => {
-    setLoading(true);
     try {
       await post('/reviews', data);
       await carregarAvaliacoes();
@@ -221,11 +201,9 @@ export function AppProvider({ children }) {
       console.error('Erro ao criar avaliação', err);
       throw err;
     }
-    setLoading(false);
   };
 
   const atualizarAvaliacao = async (id, data) => {
-    setLoading(true);
     try {
       await put(`/reviews/${id}`, data);
       await carregarAvaliacoes();
@@ -234,11 +212,9 @@ export function AppProvider({ children }) {
       console.error('Erro ao atualizar avaliação', err);
       throw err;
     }
-    setLoading(false);
   };
 
   const deletarAvaliacao = async (id) => {
-    setLoading(true);
     try {
       await del(`/reviews/${id}`);
       await carregarAvaliacoes();
@@ -247,34 +223,28 @@ export function AppProvider({ children }) {
       console.error('Erro ao deletar avaliação', err);
       throw err;
     }
-    setLoading(false);
   };
 
   // FILME-ATOR
   const carregarAtoresDoFilme = async (filmId) => {
-    setLoading(true);
     try {
       const data = await get(`/movie-actors/movie/${filmId}`);
       setMovieActors(data);
     } catch (err) {
       console.error('Erro ao carregar atores do filme', err);
     }
-    setLoading(false);
   };
 
   const criarFilmeAtor = async (data) => {
-    setLoading(true);
     try {
       await post('/movie-actors', data);
     } catch (err) {
       console.error('Erro ao associar ator', err);
       throw err;
     }
-    setLoading(false);
   };
 
   const deletarFilmeAtor = async (filmId, actorId) => {
-    setLoading(true);
     try {
       await del(`/movie-actors/${filmId}/${actorId}`);
       setMovieActors(prev => prev.filter(ma => String(ma.ator_id || ma.id) !== String(actorId)));
@@ -287,12 +257,11 @@ export function AppProvider({ children }) {
       console.error('Erro ao desassociar ator', err);
       throw err;
     }
-    setLoading(false);
   };
 
   const value = {
 
-    movies, actors, reviews, movieActors, loading,
+    movies, actors, reviews, movieActors,
     carregarFilmes, criarFilme, atualizarFilme, deletarFilme,
     carregarAtores, criarAtor, atualizarAtor, deletarAtor,
     carregarAvaliacoes, criarAvaliacao, atualizarAvaliacao, deletarAvaliacao,
